@@ -1,0 +1,321 @@
+/* CSS độc lập, đã hardcode giá trị màu/kích thước cần thiết cho PopStroke Slider */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: #252627;
+  background: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  background: transparent;
+  border: 0;
+}
+
+img,
+picture {
+  display: block;
+}
+
+img {
+  max-width: 100%;
+}
+
+.popstroke-slider {
+  display: grid;
+  width: 100%;
+  max-width: 1600px;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.popstroke-slider__media {
+  display: flex;
+  flex-flow: row nowrap;
+  max-height: 440px;
+  overflow: hidden;
+  aspect-ratio: 6 / 7;
+  border-radius: 16px;
+}
+
+.popstroke-slider__slide {
+  --activeX: calc(var(--index) * -100%);
+  --inX: calc(var(--activeX) + 100%);
+  --inY: 0;
+  --outX: calc(var(--activeX) - 100%);
+  --outY: 0;
+  flex: 0 0 100%;
+  overflow: hidden;
+  transform: translateX(100%);
+}
+
+.popstroke-slider__slide picture,
+.popstroke-slider__slide img {
+  width: 100%;
+  height: 100%;
+}
+
+.popstroke-slider__slide img {
+  height: 105%;
+  object-fit: cover;
+}
+
+.popstroke-slider__content {
+  display: grid;
+  grid-template-rows: auto auto;
+  min-width: 0;
+}
+
+.popstroke-slider__tabs {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px 16px;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.popstroke-slider__tab {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  color: #252627;
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 500;
+  line-height: 1.3;
+  text-transform: capitalize;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 200ms ease;
+}
+
+.popstroke-slider__tab:hover,
+.popstroke-slider__tab._tabActive_qxh0t_56 {
+  opacity: 1;
+}
+
+.popstroke-slider__progress {
+  display: block;
+  width: 0;
+  height: 5px;
+  overflow: hidden;
+  background-color: rgba(37, 38, 39, 0.2);
+}
+
+.popstroke-slider__progress-level {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: #252627;
+  opacity: 1;
+}
+
+.popstroke-slider__panels {
+  position: relative;
+  display: grid;
+  max-width: 512px;
+  padding: 32px 0;
+  overflow: hidden;
+}
+
+.popstroke-slider__panel {
+  grid-area: 1 / 1;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(30%);
+  pointer-events: none;
+}
+
+.popstroke-slider__panel._panelActive_qxh0t_28 {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.popstroke-slider__panel p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.popstroke-slider__paragraph--spaced {
+  padding-bottom: clamp(16px, 3vw, 32px);
+}
+
+.popstroke-slider__overlay {
+  display: none;
+  pointer-events: none;
+}
+
+._autoAdvance_qxh0t_1 ._heroActive_qxh0t_1 {
+  animation: popstrokeHeroActive 5000ms ease;
+}
+
+._manualAdvance_qxh0t_5 ._heroActive_qxh0t_1 {
+  transform: translate(var(--activeX), 0) scale(1);
+}
+
+._autoAdvance_qxh0t_1 ._panelActive_qxh0t_28 {
+  animation: popstrokePanelActive 5000ms ease-out;
+}
+
+._manualAdvance_qxh0t_5 ._panelActive_qxh0t_28 {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+._autoAdvance_qxh0t_1 ._tabActive_qxh0t_56 ._tabProgress_qxh0t_56 {
+  animation: popstrokeTabProgress 5000ms linear;
+}
+
+._manualAdvance_qxh0t_5 ._tabActive_qxh0t_56 ._tabProgress_qxh0t_56 {
+  width: 100%;
+  opacity: 1;
+}
+
+._autoAdvance_qxh0t_1 ._tabActive_qxh0t_56 ._tabProgressLevel_qxh0t_88 {
+  animation: popstrokeTabProgressLevel 5000ms linear;
+}
+
+@keyframes popstrokeHeroActive {
+  0% {
+    transform: translate(var(--inX), var(--inY)) scale(1.12);
+  }
+  10% {
+    margin-top: -5%;
+    transform: translate(var(--activeX), 0) scale(1.1);
+  }
+  20% {
+    margin-top: 0;
+  }
+  90% {
+    transform: translate(var(--activeX), 0);
+  }
+  100% {
+    transform: translate(var(--outX), var(--outY));
+  }
+}
+
+@keyframes popstrokePanelActive {
+  0% {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+  10%,
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30%);
+  }
+}
+
+@keyframes popstrokeTabProgress {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  10% {
+    width: 110%;
+    opacity: 1;
+  }
+  15%,
+  90% {
+    width: 100%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes popstrokeTabProgressLevel {
+  0%,
+  10% {
+    width: 100%;
+  }
+  90%,
+  100% {
+    width: 0;
+  }
+}
+
+@media (min-width: 640px) {
+  .popstroke-slider__tab {
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .popstroke-slider {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+  }
+
+  .popstroke-slider__media {
+    max-height: 880px;
+  }
+
+  .popstroke-slider__tabs {
+    flex-direction: column;
+    justify-content: center;
+    overflow: visible;
+  }
+
+  .popstroke-slider__tab {
+    font-size: clamp(24px, 3.5vw, 56px);
+  }
+
+  .popstroke-slider__panels {
+    max-width: 448px;
+    padding: 48px 0;
+  }
+
+  .popstroke-slider__slide {
+    --inX: var(--activeX);
+    --inY: 100%;
+    --outX: var(--activeX);
+    --outY: -100%;
+  }
+
+  .popstroke-slider__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+    background-image: linear-gradient(
+      #ffffff 0%,
+      transparent 48px calc(100% - 48px),
+      #ffffff 100%
+    );
+  }
+}
+
+@media (min-width: 1280px) {
+  .popstroke-slider {
+    gap: 96px;
+  }
+
+  .popstroke-slider__tab {
+    font-size: clamp(32px, 4vw, 72px);
+  }
+}

@@ -6,43 +6,18 @@
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>PopStroke Slider</title>
-  <link href="/assets/CmvYZIef-style.css" rel="stylesheet" />
-  <style>
-    #popstrokeSlider [role="tab"] {
-      color: var(--colors-surface-on);
-    }
-
-    #popstrokeSlider [role="tab"]._tabActive_qxh0t_56 {
-      opacity: 1;
-    }
-
-    #popstrokeSlider [role="tab"]._tabActive_qxh0t_56 ._tabProgress_qxh0t_56 {
-      background-color: color-mix(in srgb,
-          var(--colors-surface-on) 20%,
-          transparent);
-    }
-
-    #popstrokeSlider [role="tab"]._tabActive_qxh0t_56 ._tabProgressLevel_qxh0t_88 {
-      background-color: var(--colors-surface-on);
-    }
-  </style>
+  <link href="./assets/popstroke-section-hardcode-final.css" rel="stylesheet" />
 </head>
 
 <body lang="en">
   <div style="padding: 20px;">
-    <section
-      class="d_grid grid-g_1rem lrg:grid-g_3rem xlrg:grid-g_6rem lrg:grid-tc_1fr_1fr lrg:w_100% max-w_100rem _autoAdvance_qxh0t_1"
-      id="popstrokeSlider" style="--slideDuration:5000ms">
-      <div class="asp_6/7 bdr_1rem d_flex flex-d_row flex-wrap_nowrap max-h_440px lrg:max-h_880px ov_hidden"
-        data-slider-media=""></div>
-      <div class="d_grid grid-tr_auto_auto">
-        <div class="d_flex lrg:flex-d_column lrg:jc_center ai_start gap_1.4rem_1rem" data-slider-tabs="" role="tablist">
+    <section class="popstroke-slider _autoAdvance_qxh0t_1" id="popstrokeSlider" style="--slideDuration:5000ms">
+      <div class="popstroke-slider__media" data-slider-media=""></div>
+      <div class="popstroke-slider__content">
+        <div class="popstroke-slider__tabs" data-slider-tabs="" role="tablist">
         </div>
-        <div class="d_flex flex-d_row flex-wrap max-w_32rem lrg:max-w_28rem py_2rem lrg:py_3rem ov_hidden pos_relative"
-          data-slider-panels="">
-          <div
-            class="d_block bg-i_none lrg:bg-i_linear-gradient(var(--colors-surface)_0%,_transparent_3rem_calc(100%_-_3rem),_var(--colors-surface)_100%); pos_absolute top_0 left_0 w_100% h_100%"
-            data-slider-overlay=""></div>
+        <div class="popstroke-slider__panels" data-slider-panels="">
+          <div class="popstroke-slider__overlay" data-slider-overlay=""></div>
         </div>
       </div>
     </section>
@@ -103,33 +78,19 @@
       };
 
       const heroClass =
-        'flex_0_0_100% ov_hidden trf_translateX(100%) ' +
-        '--activeX_calc(var(--index)_*_-100%) ' +
-        '--inX_calc(var(--activeX)_+_100%) ' +
-        'lrg:--inX_var(--activeX) --inY_0 lrg:--inY_100% ' +
-        '--outX_calc(var(--activeX)_-_100%) ' +
-        'lrg:--outX_var(--activeX) --outY_0 lrg:--outY_-100% ' +
-        '[&_img]:w_100% [&_img]:h_105% [&_img]:obj-f_cover';
+        'popstroke-slider__slide';
 
       const tabClass =
-        'op_0.5 d_flex flex-d_column ai_center cursor_pointer ' +
-        'trs-prop_opacity trs-dur_200ms trs-tmf_easeQuad hover:op_1 ' +
-        'textStyle_body.4 sml:textStyle_body.3 lrg:textStyle_body.2 ' +
-        'xlrg:textStyle_body.1 tt_capitalize';
+        'popstroke-slider__tab';
 
       const progressClass =
-        'bg-c_surface.on/20 d_block h_5px w_0 _tabProgress_qxh0t_56';
+        'popstroke-slider__progress _tabProgress_qxh0t_56';
 
       const progressLevelClass =
-        'bg-c_surface.on d_block h_100% op_1 _tabProgressLevel_qxh0t_88';
+        'popstroke-slider__progress-level _tabProgressLevel_qxh0t_88';
 
       const panelClass =
-        'flex_0_0_100% trf_translateX(100%) ' +
-        '--activeX_calc(var(--index)_*_-100%) ' +
-        '--inX_calc(var(--activeX)_+_100%) ' +
-        'lrg:--inX_var(--activeX) --inY_0 lrg:--inY_30% ' +
-        '--outX_calc(var(--activeX)_-_100%) ' +
-        'lrg:--outX_var(--activeX) --outY_0 lrg:--outY_-30%';
+        'popstroke-slider__panel';
 
       const duration =
         Number.parseInt(
@@ -208,7 +169,7 @@
             createElement('p', {
               className:
                 paragraphIndex < item.content.length - 1
-                  ? 'pb_fluid-2'
+                  ? 'popstroke-slider__paragraph--spaced'
                   : '',
               textContent: text
             })
