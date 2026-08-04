@@ -1,5 +1,15 @@
 const POPSTROKE_CONTENT = [
   {
+    tab: "team building.",
+    video:
+      "https://partee.vn/wp-content/themes/flatsome-child/Clip/Team%20Building%20ParTee.mp4",
+    duration: 35000,
+    alt: "A ParTee team-building event filled with games, connection, and shared moments.",
+    content: [
+      "Bring your team closer with a ParTee experience designed for connection, laughter, and a little friendly competition. It's a refreshing way to celebrate wins, build stronger bonds, and create memories together beyond the office.",
+    ],
+  },
+  {
     tab: "eat.",
     image:
       "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1520&h=1770&q=90&fit=crop",
@@ -26,15 +36,6 @@ const POPSTROKE_CONTENT = [
     content: [
       "Grab a cold one and settle in at our lively sports bar, the perfect spot to catch the latest game or celebrate that clutch hole-in-one. With craft beers, premium spirits, and cocktails mixed to perfection, every sip goes down as smooth as your best putt.",
       "Order straight from our app and get drinks delivered right to you on the course, because at PopStroke, the party doesn’t have to stop.",
-    ],
-  },
-  {
-    tab: "team building.",
-    video:
-      "https://partee.vn/wp-content/themes/flatsome-child/Clip/Team%20Building%20ParTee.mp4",
-    alt: "A ParTee team-building event filled with games, connection, and shared moments.",
-    content: [
-      "Bring your team closer with a ParTee experience designed for connection, laughter, and a little friendly competition. It's a refreshing way to celebrate wins, build stronger bonds, and create memories together beyond the office.",
     ],
   },
 ];
@@ -75,11 +76,14 @@ const POPSTROKE_CONTENT = [
 
   const panelClass = "popstroke-slider__panel";
 
-  const duration =
+  const defaultDuration =
     Number.parseInt(slider.style.getPropertyValue("--slideDuration"), 10) ||
     5000;
 
-  const advanceDelay = duration * 0.9;
+  const getSlideDuration = (item) =>
+    Number.isFinite(item.duration) && item.duration > 0
+      ? item.duration
+      : defaultDuration;
 
   const createElement = (tag, options = {}) => {
     const element = document.createElement(tag);
@@ -88,11 +92,13 @@ const POPSTROKE_CONTENT = [
   };
 
   POPSTROKE_CONTENT.forEach((item, index) => {
+    const slideDuration = getSlideDuration(item);
     const hero = createElement("div", {
-      className: heroClass,
+      className: item.video ? `${heroClass} ${heroClass}--video` : heroClass,
     });
 
     hero.style.setProperty("--index", index);
+    hero.style.setProperty("--itemDuration", `${slideDuration}ms`);
 
     if (item.video) {
       const video = createElement("video", {
@@ -127,10 +133,11 @@ const POPSTROKE_CONTENT = [
       id: `popstroke-tab-${index}`,
       type: "button",
       role: "tab",
-      className: tabClass,
+      className: item.video ? `${tabClass} ${tabClass}--video` : tabClass,
     });
 
     tab.setAttribute("aria-controls", `popstroke-panel-${index}`);
+    tab.style.setProperty("--itemDuration", `${slideDuration}ms`);
 
     tab.append(document.createTextNode(item.tab));
 
@@ -150,10 +157,11 @@ const POPSTROKE_CONTENT = [
     const panel = createElement("div", {
       id: `popstroke-panel-${index}`,
       role: "tabpanel",
-      className: panelClass,
+      className: item.video ? `${panelClass} ${panelClass}--video` : panelClass,
     });
 
     panel.style.setProperty("--index", index);
+    panel.style.setProperty("--itemDuration", `${slideDuration}ms`);
     panel.setAttribute("aria-labelledby", tab.id);
 
     item.content.forEach((text, paragraphIndex) => {
@@ -202,6 +210,10 @@ const POPSTROKE_CONTENT = [
           video.play().catch(() => {});
         } else {
           video.pause();
+
+          if (video.readyState > 0) {
+            video.currentTime = 0;
+          }
         }
       }
     });
@@ -229,9 +241,27 @@ const POPSTROKE_CONTENT = [
 
   const stopAutoPlay = () => {
     if (timer !== null) {
-      window.clearInterval(timer);
+      window.clearTimeout(timer);
       timer = null;
     }
+  };
+
+  const scheduleNextSlide = () => {
+    if (hasInteraction || POPSTROKE_CONTENT.length <= 1) {
+      return;
+    }
+
+    stopAutoPlay();
+
+    const activeIndex = getActiveIndex();
+    const delay = getSlideDuration(POPSTROKE_CONTENT[activeIndex]);
+
+    timer = window.setTimeout(() => {
+      activeWindow = [getNextIndex(getActiveIndex())];
+
+      render();
+      scheduleNextSlide();
+    }, delay);
   };
 
   const selectSlide = (index) => {
@@ -277,14 +307,5 @@ const POPSTROKE_CONTENT = [
   });
 
   render();
-
-  if (POPSTROKE_CONTENT.length > 1) {
-    timer = window.setInterval(() => {
-      activeWindow = [...activeWindow, getNextIndex(getActiveIndex())].slice(
-        -2,
-      );
-
-      render();
-    }, advanceDelay);
-  }
+  scheduleNextSlide();
 })();

@@ -61,6 +61,8 @@ video {
   --outY: 0;
   flex: 0 0 100%;
   overflow: hidden;
+  border-radius: 16px;
+  clip-path: inset(0 round 16px);
   transform: translateX(100%);
 }
 
@@ -69,11 +71,18 @@ video {
 .popstroke-slider__slide video {
   width: 100%;
   height: 100%;
+  border-radius: inherit;
 }
 
 .popstroke-slider__slide img {
   height: 105%;
+  clip-path: inset(0 round 16px);
   object-fit: cover;
+}
+
+.popstroke-slider__slide picture {
+  overflow: hidden;
+  clip-path: inset(0 round 16px);
 }
 
 .popstroke-slider__slide video {
@@ -169,7 +178,15 @@ video {
 }
 
 ._autoAdvance_qxh0t_1 ._heroActive_qxh0t_1 {
-  animation: popstrokeHeroActive 5000ms ease;
+  animation: popstrokeHeroActive var(--itemDuration, var(--slideDuration, 5000ms)) ease;
+}
+
+._autoAdvance_qxh0t_1
+  .popstroke-slider__slide--video._heroActive_qxh0t_1 {
+  animation:
+    popstrokeVideoHeroIn 500ms ease-out forwards,
+    popstrokeVideoHeroOut 500ms ease-in
+      calc(var(--itemDuration) - 500ms) forwards;
 }
 
 ._manualAdvance_qxh0t_5 ._heroActive_qxh0t_1 {
@@ -177,7 +194,15 @@ video {
 }
 
 ._autoAdvance_qxh0t_1 ._panelActive_qxh0t_28 {
-  animation: popstrokePanelActive 5000ms ease-out;
+  animation: popstrokePanelActive var(--itemDuration, var(--slideDuration, 5000ms)) ease-out;
+}
+
+._autoAdvance_qxh0t_1
+  .popstroke-slider__panel--video._panelActive_qxh0t_28 {
+  animation:
+    popstrokeVideoPanelIn 500ms ease-out forwards,
+    popstrokeVideoPanelOut 500ms ease-in
+      calc(var(--itemDuration) - 500ms) forwards;
 }
 
 ._manualAdvance_qxh0t_5 ._panelActive_qxh0t_28 {
@@ -186,7 +211,7 @@ video {
 }
 
 ._autoAdvance_qxh0t_1 ._tabActive_qxh0t_56 ._tabProgress_qxh0t_56 {
-  animation: popstrokeTabProgress 5000ms linear;
+  animation: popstrokeTabProgress var(--itemDuration, var(--slideDuration, 5000ms)) linear;
 }
 
 ._manualAdvance_qxh0t_5 ._tabActive_qxh0t_56 ._tabProgress_qxh0t_56 {
@@ -195,7 +220,19 @@ video {
 }
 
 ._autoAdvance_qxh0t_1 ._tabActive_qxh0t_56 ._tabProgressLevel_qxh0t_88 {
-  animation: popstrokeTabProgressLevel 5000ms linear;
+  animation: popstrokeTabProgressLevel var(--itemDuration, var(--slideDuration, 5000ms)) linear;
+}
+
+._autoAdvance_qxh0t_1
+  .popstroke-slider__tab--video._tabActive_qxh0t_56
+  ._tabProgress_qxh0t_56 {
+  animation: popstrokeVideoTabProgressIn 750ms linear forwards;
+}
+
+._autoAdvance_qxh0t_1
+  .popstroke-slider__tab--video._tabActive_qxh0t_56
+  ._tabProgressLevel_qxh0t_88 {
+  animation: popstrokeVideoTabProgressLevel var(--itemDuration) linear forwards;
 }
 
 @keyframes popstrokeHeroActive {
@@ -214,6 +251,46 @@ video {
   }
   100% {
     transform: translate(var(--outX), var(--outY));
+  }
+}
+
+@keyframes popstrokeVideoHeroIn {
+  from {
+    transform: translate(var(--inX), var(--inY));
+  }
+  to {
+    transform: translate(var(--activeX), 0);
+  }
+}
+
+@keyframes popstrokeVideoHeroOut {
+  from {
+    transform: translate(var(--activeX), 0);
+  }
+  to {
+    transform: translate(var(--outX), var(--outY));
+  }
+}
+
+@keyframes popstrokeVideoPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popstrokeVideoPanelOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30%);
   }
 }
 
@@ -260,6 +337,30 @@ video {
   }
   90%,
   100% {
+    width: 0;
+  }
+}
+
+@keyframes popstrokeVideoTabProgressIn {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  66.666% {
+    width: 110%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes popstrokeVideoTabProgressLevel {
+  from {
+    width: 100%;
+  }
+  to {
     width: 0;
   }
 }
