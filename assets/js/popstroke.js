@@ -28,6 +28,15 @@ const POPSTROKE_CONTENT = [
       "Order straight from our app and get drinks delivered right to you on the course, because at PopStroke, the party doesn’t have to stop.",
     ],
   },
+  {
+    tab: "team building.",
+    video:
+      "https://partee.vn/wp-content/themes/flatsome-child/Clip/Team%20Building%20ParTee.mp4",
+    alt: "A ParTee team-building event filled with games, connection, and shared moments.",
+    content: [
+      "Bring your team closer with a ParTee experience designed for connection, laughter, and a little friendly competition. It's a refreshing way to celebrate wins, build stronger bonds, and create memories together beyond the office.",
+    ],
+  },
 ];
 
 (() => {
@@ -85,19 +94,33 @@ const POPSTROKE_CONTENT = [
 
     hero.style.setProperty("--index", index);
 
-    const picture = createElement("picture");
+    if (item.video) {
+      const video = createElement("video", {
+        src: item.video,
+        muted: true,
+        loop: true,
+        controls: true,
+        playsInline: true,
+        preload: "metadata",
+      });
 
-    const image = createElement("img", {
-      src: item.image,
-      alt: item.alt || "",
-      width: 1520,
-      height: 1770,
-      decoding: "async",
-      loading: index === 0 ? "eager" : "lazy",
-    });
+      video.setAttribute("aria-label", item.alt || item.tab);
+      hero.append(video);
+    } else {
+      const picture = createElement("picture");
 
-    picture.append(image);
-    hero.append(picture);
+      const image = createElement("img", {
+        src: item.image,
+        alt: item.alt || "",
+        width: 1520,
+        height: 1770,
+        decoding: "async",
+        loading: index === 0 ? "eager" : "lazy",
+      });
+
+      picture.append(image);
+      hero.append(picture);
+    }
     media.append(hero);
 
     const tab = createElement("button", {
@@ -169,7 +192,18 @@ const POPSTROKE_CONTENT = [
     slider.classList.toggle(classes.manual, hasInteraction);
 
     heroes.forEach((hero, index) => {
+      const isCurrent = index === activeIndex;
+      const video = hero.querySelector("video");
+
       hero.classList.toggle(classes.heroActive, visibleIndexes.has(index));
+
+      if (video) {
+        if (isCurrent) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      }
     });
 
     panels.forEach((panel, index) => {
