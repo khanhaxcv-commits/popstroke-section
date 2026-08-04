@@ -3,7 +3,6 @@ const POPSTROKE_CONTENT = [
     tab: "team building.",
     video:
       "https://partee.vn/wp-content/themes/flatsome-child/Clip/Team%20Building%20ParTee.mp4",
-    duration: 35000,
     alt: "A ParTee team-building event filled with games, connection, and shared moments.",
     content: [
       "Bring your team closer with a ParTee experience designed for connection, laughter, and a little friendly competition. It's a refreshing way to celebrate wins, build stronger bonds, and create memories together beyond the office.",
@@ -104,7 +103,6 @@ const POPSTROKE_CONTENT = [
       const video = createElement("video", {
         src: item.video,
         muted: true,
-        loop: true,
         controls: true,
         playsInline: true,
         preload: "metadata",
@@ -191,6 +189,24 @@ const POPSTROKE_CONTENT = [
 
   const getNextIndex = (index) => (index + 1) % POPSTROKE_CONTENT.length;
 
+  const syncVideoProgress = (index, video) => {
+    const progressLevel = tabs[index]?.querySelector(
+      "._tabProgressLevel_qxh0t_88",
+    );
+
+    if (!progressLevel) {
+      return;
+    }
+
+    const duration = video.duration;
+    const ratio =
+      Number.isFinite(duration) && duration > 0
+        ? Math.min(Math.max(video.currentTime / duration, 0), 1)
+        : 0;
+
+    progressLevel.style.width = `${(1 - ratio) * 100}%`;
+  };
+
   const render = () => {
     const activeIndex = getActiveIndex();
     const visibleIndexes = new Set(activeWindow);
@@ -214,6 +230,8 @@ const POPSTROKE_CONTENT = [
           if (video.readyState > 0) {
             video.currentTime = 0;
           }
+
+          syncVideoProgress(index, video);
         }
       }
     });
@@ -246,6 +264,18 @@ const POPSTROKE_CONTENT = [
     }
   };
 
+  const advanceToNextSlide = () => {
+    if (hasInteraction || POPSTROKE_CONTENT.length <= 1) {
+      return;
+    }
+
+    stopAutoPlay();
+    activeWindow = [getNextIndex(getActiveIndex())];
+
+    render();
+    scheduleNextSlide();
+  };
+
   const scheduleNextSlide = () => {
     if (hasInteraction || POPSTROKE_CONTENT.length <= 1) {
       return;
@@ -254,15 +284,84 @@ const POPSTROKE_CONTENT = [
     stopAutoPlay();
 
     const activeIndex = getActiveIndex();
-    const delay = getSlideDuration(POPSTROKE_CONTENT[activeIndex]);
+    const activeItem = POPSTROKE_CONTENT[activeIndex];
 
-    timer = window.setTimeout(() => {
-      activeWindow = [getNextIndex(getActiveIndex())];
+    if (activeItem.video) {
+      return;
+    }
 
-      render();
-      scheduleNextSlide();
-    }, delay);
+    timer = window.setTimeout(
+      advanceToNextSlide,
+      getSlideDuration(activeItem),
+    );
   };
+
+  heroes.forEach((hero, index) => {
+    const video = hero.querySelector("video");
+
+    if (!video) {
+      return;
+    }
+
+    let progressFrame = null;
+
+    const stopProgressUpdates = () => {
+      if (progressFrame !== null) {
+        window.cancelAnimationFrame(progressFrame);
+        progressFrame = null;
+      }
+    };
+
+    const updateProgress = () => {
+      syncVideoProgress(index, video);
+
+      if (!video.paused && !video.ended) {
+        progressFrame = window.requestAnimationFrame(updateProgress);
+      } else {
+        progressFrame = null;
+      }
+    };
+
+    const startProgressUpdates = () => {
+      stopProgressUpdates();
+      updateProgress();
+    };
+
+    video.addEventListener("play", startProgressUpdates);
+
+    video.addEventListener("pause", () => {
+      stopProgressUpdates();
+      syncVideoProgress(index, video);
+    });
+
+    ["loadedmetadata", "durationchange", "seeking", "seeked"].forEach(
+      (eventName) => {
+        video.addEventListener(eventName, () => {
+          syncVideoProgress(index, video);
+        });
+      },
+    );
+
+    video.addEventListener("ended", () => {
+      stopProgressUpdates();
+      syncVideoProgress(index, video);
+
+      if (!hasInteraction && index === getActiveIndex()) {
+        advanceToNextSlide();
+      }
+    });
+
+    video.addEventListener("error", () => {
+      stopProgressUpdates();
+
+      if (!hasInteraction && index === getActiveIndex()) {
+        stopAutoPlay();
+        timer = window.setTimeout(advanceToNextSlide, defaultDuration);
+      }
+    });
+
+    syncVideoProgress(index, video);
+  });
 
   const selectSlide = (index) => {
     if (index < 0 || index >= POPSTROKE_CONTENT.length) {
